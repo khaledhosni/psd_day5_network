@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   initData()async{
-    print('init data has been called');
     listOfUsers =await UserService().getAllUsers();
 
   }
@@ -50,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Image.network(listOfUsers[index].avatar!, width: 100,height: 100,fit: BoxFit.cover,),
                     Column(
                       children: [
-                        Text(listOfUsers[index].name!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),textAlign: TextAlign.start,),
-                        Text(listOfUsers[index].phone!,style: TextStyle(fontSize: 16, ),textAlign: TextAlign.start),
-                        Text(listOfUsers[index].country!,style:TextStyle(fontSize: 16),textAlign: TextAlign.start,),
+                        Text(listOfUsers[index].name!,),
+                        Text(listOfUsers[index].phone!),
+                        Text(listOfUsers[index].country!),
                       ],
                     )
                   ],
