@@ -13,18 +13,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<User> listOfUsers=[];
 
+  _HomeScreenState(){
+
+
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    initData();
-
+   initData();
   }
 
-  initData()async{
+  initData() async {
+
     listOfUsers =await UserService().getAllUsers();
 
+    setState(() {
+
+    });
+    print(listOfUsers);
   }
   @override
   Widget build(BuildContext context) {
