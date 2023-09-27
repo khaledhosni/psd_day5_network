@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:psd_day5_network/data/remote/model/User.dart';
 import 'package:psd_day5_network/data/remote/service/UserService.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,6 +14,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   List<User> listOfUsers=[];
+
+  bool dataLoaded=false;
 
   _HomeScreenState(){
 
@@ -27,10 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   initData() async {
 
-    listOfUsers =await UserService().getAllUsers();
-
+    try {
+      listOfUsers = await UserService().getAllUsers();
+    }on Exception catch(e){
+      Alert(context: context,desc: e.toString());
+    }
     setState(() {
 
+        dataLoaded=true;
     });
     print(listOfUsers);
   }
@@ -44,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
+          dataLoaded?
           Expanded(
             child: ListView.builder(
               shrinkWrap: true,
@@ -51,6 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
 
               return Card(
+                elevation: 1,
+                margin: EdgeInsets.all(4),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -68,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             },),
           )
+              :Center(child: SizedBox(child: LoadingIndicator(indicatorType: Indicator.ballPulse),width: 32,height: 32,))
         ],
       ),
     );
