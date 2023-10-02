@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:psd_day5_network/data/remote/service/ImageService.dart';
+import 'package:psd_day5_network/data/remote/model/ImageUlpad.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,7 +38,7 @@ class UploadScreen extends StatefulWidget {
 
 class _UploadScreenState extends State<UploadScreen> {
 
-   var selectedFile;
+   File? selectedFile;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -51,32 +55,65 @@ class _UploadScreenState extends State<UploadScreen> {
             onTap:() async{
               await pickImage();
             },
-            child: Image.file(selectedFile)),
+            child: Image.file(selectedFile!)),
         Container(
             width: double.infinity,
             margin: EdgeInsets.all(16),
-            child: ElevatedButton(onPressed: (){}, child: Text("Upload Image")))
+            child: ElevatedButton(onPressed: (){
+
+              uploadImage();
+            }, child: Text("Upload Image")))
       ],
     );
   }
 
 
-  pickImage()async{
+ pickImage()async{
 
     var picker=ImagePicker();
 
     var xFile=await picker.pickImage(source: ImageSource.camera);
 
+    // user selected a file
     if(xFile!=null){
       setState(() {
-
-      //  selected=true;
-
         selectedFile=File(xFile.path);
       });
 
+
     }
 
+  }
 
+
+  uploadImage() async{
+
+
+
+    var index=selectedFile!.path.lastIndexOf(".");
+    var type=selectedFile!.path.substring(index+1);
+
+    var imageByte= await selectedFile!.readAsBytes();
+    String imageBase64= base64Encode(imageByte);
+
+
+   var img=ImageUpload(name:"ahmed"+DateTime.now().millisecond.toString(),
+     type: type,
+     src:imageBase64
+
+    );
+
+    var uploaded=await ImageService().uploadImage(img);
+
+    if(uploaded){
+      Alert(context: context, desc: "your image has been uploaded").show();
+    }else{
+      Alert(context: context,desc: "failed to upload").show();
+
+    }
+
+    print(selectedFile!.path);
+    print(type);
+    print(imageBase64);
   }
 }
